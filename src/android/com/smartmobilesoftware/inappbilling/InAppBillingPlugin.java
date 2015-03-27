@@ -73,14 +73,30 @@ public class InAppBillingPlugin extends CordovaPlugin {
 	            callbackContext.success(jsonSkuList);
 			} else if ("buy".equals(action)) {
 				// Buy an item
-				// Get Product Id 
-				final String sku = data.getString(0);
-				buy(sku);
+                // Get Product Id 
+                final String sku = data.getString(0);
+                final String payload;
+                // Get developerPayload
+                if(data.length() > 1) {
+                    payload = data.getString(1);
+                }
+                else {
+                    payload = "";
+                }
+				buy(sku, payload);
 			} else if ("subscribe".equals(action)) {
 				// Subscribe to an item
-				// Get Product Id 
-				final String sku = data.getString(0);
-				subscribe(sku);
+                // Get Product Id 
+                final String sku = data.getString(0);
+                final String payload;
+                // Get developerPayload
+                if(data.length() > 1) {
+                    payload = data.getString(1);
+                }
+                else {
+                    payload = "";
+                }
+				subscribe(sku, payload);
 			} else if ("consumePurchase".equals(action)) {
 				consumePurchase(data);
 			} else if ("getAvailableProducts".equals(action)) {
@@ -177,12 +193,7 @@ public class InAppBillingPlugin extends CordovaPlugin {
     }
 	
 	// Buy an item
-	private void buy(final String sku){
-		/* TODO: for security, generate your payload here for verification. See the comments on 
-         *        verifyDeveloperPayload() for more info. Since this is a sample, we just use 
-         *        an empty string, but on a production app you should generate this. */
-		final String payload = "";
-		
+	private void buy(final String sku, final String payload){
 		if (mHelper == null){
 			callbackContext.error(IabHelper.ERR_PURCHASE + "|Billing plugin was not initialized");
 			return;
@@ -196,7 +207,7 @@ public class InAppBillingPlugin extends CordovaPlugin {
 	}
 	
 	// Buy an item
-	private void subscribe(final String sku){
+	private void subscribe(final String sku, final String payload){
 		if (mHelper == null){
 			callbackContext.error(IabHelper.ERR_PURCHASE + "|Billing plugin was not initialized");
 			return;
@@ -205,13 +216,6 @@ public class InAppBillingPlugin extends CordovaPlugin {
             callbackContext.error(IabHelper.ERR_SUBSCRIPTIONS_NOT_AVAILABLE + "|Subscriptions not supported on your device yet. Sorry!");
             return;
         }
-		
-		/* TODO: for security, generate your payload here for verification. See the comments on 
-         *        verifyDeveloperPayload() for more info. Since this is a sample, we just use 
-         *        an empty string, but on a production app you should generate this. */
-		final String payload = "";
-		
-		
 		
 		this.cordova.setActivityResultCallback(this);
         Log.d(TAG, "Launching purchase flow for subscription.");

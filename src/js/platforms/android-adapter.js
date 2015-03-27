@@ -178,6 +178,8 @@ store.when("requested", function(product) {
         product.set("state", store.INITIATED);
 
         var method = 'subscribe';
+        var developerPayload = product.developerPayload || "";
+        delete(product.developerPayload);
         if (product.type === store.NON_CONSUMABLE || product.type === store.CONSUMABLE) {
             method = 'buy';
         }
@@ -213,7 +215,7 @@ store.when("requested", function(product) {
                 });
             }
             product.set("state", store.VALID);
-        }, product.id);
+        }, product.id, developerPayload);
     });
 });
 

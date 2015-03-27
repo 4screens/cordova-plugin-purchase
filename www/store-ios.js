@@ -294,7 +294,7 @@ store.verbosity = 0;
     "use strict";
     var callbacks = {};
     var callbackId = 0;
-    store.order = function(pid) {
+    store.order = function(pid, developerPayload) {
         var p = pid;
         if (typeof pid === "string") {
             p = store.products.byId[pid] || store.products.byAlias[pid];
@@ -304,6 +304,9 @@ store.verbosity = 0;
                     loaded: true,
                     valid: false
                 });
+            }
+            if (developerPayload) {
+                p.developerPayload = developerPayload;
             }
         }
         var localCallbackId = callbackId++;

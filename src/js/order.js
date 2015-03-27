@@ -21,10 +21,8 @@ var callbackId = 0;
 /// See the ["Purchasing section"](#purchasing) to learn more about
 /// the purchase process.
 ///
-store.order = function(pid) {
-
+store.order = function(pid, developerPayload) {
     var p = pid;
-
     if (typeof pid === "string") {
         p = store.products.byId[pid] || store.products.byAlias[pid];
         if (!p) {
@@ -33,6 +31,9 @@ store.order = function(pid) {
                 loaded: true,
                 valid: false
             });
+        }
+        if(developerPayload) {
+            p.developerPayload = developerPayload;
         }
     }
 

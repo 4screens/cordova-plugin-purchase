@@ -294,7 +294,7 @@ store.verbosity = 0;
     "use strict";
     var callbacks = {};
     var callbackId = 0;
-    store.order = function(pid) {
+    store.order = function(pid, developerPayload) {
         var p = pid;
         if (typeof pid === "string") {
             p = store.products.byId[pid] || store.products.byAlias[pid];
@@ -304,6 +304,9 @@ store.verbosity = 0;
                     loaded: true,
                     valid: false
                 });
+            }
+            if (developerPayload) {
+                p.developerPayload = developerPayload;
             }
         }
         var localCallbackId = callbackId++;
@@ -768,17 +771,17 @@ store.verbosity = 0;
         }
         return cordova.exec(success, errorCb(fail), "InAppBillingPlugin", "getPurchases", [ "null" ]);
     };
-    InAppBilling.prototype.buy = function(success, fail, productId) {
+    InAppBilling.prototype.buy = function(success, fail, productId, developerPayload) {
         if (this.options.showLog) {
             log("buy called!");
         }
-        return cordova.exec(success, errorCb(fail), "InAppBillingPlugin", "buy", [ productId ]);
+        return cordova.exec(success, errorCb(fail), "InAppBillingPlugin", "buy", [ productId, developerPayload ]);
     };
-    InAppBilling.prototype.subscribe = function(success, fail, productId) {
+    InAppBilling.prototype.subscribe = function(success, fail, productId, developerPayload) {
         if (this.options.showLog) {
             log("subscribe called!");
         }
-        return cordova.exec(success, errorCb(fail), "InAppBillingPlugin", "subscribe", [ productId ]);
+        return cordova.exec(success, errorCb(fail), "InAppBillingPlugin", "subscribe", [ productId, developerPayload ]);
     };
     InAppBilling.prototype.consumePurchase = function(success, fail, productId) {
         if (this.options.showLog) {
@@ -950,6 +953,8 @@ store.verbosity = 0;
             }
             product.set("state", store.INITIATED);
             var method = "subscribe";
+            var developerPayload = product.developerPayload || "";
+            delete product.developerPayload;
             if (product.type === store.NON_CONSUMABLE || product.type === store.CONSUMABLE) {
                 method = "buy";
             }
@@ -967,7 +972,7 @@ store.verbosity = 0;
                     });
                 }
                 product.set("state", store.VALID);
-            }, product.id);
+            }, product.id, developerPayload);
         });
     });
     store.when("product", "finished", function(product) {
